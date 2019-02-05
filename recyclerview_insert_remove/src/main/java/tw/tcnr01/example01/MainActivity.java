@@ -80,6 +80,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     //移除一個item
     private void removeItem(int position) {
+        //判斷position是否合理(ex position=3 list的size(item個數)卻只有1 會導致閃退)
+        if(position>=mExampleList.size()){
+            return;
+        }
         //在第幾個位置上移除item
         mExampleList.remove(position);
 
@@ -91,6 +95,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     //新增一個item
     private void insertItem(int position) {
+        //判斷position是否合理(ex position=3 list的size(item個數)卻只有1 會導致閃退)
+        if(position>mExampleList.size()){
+            return;
+        }
         //在第幾個位置上插入item
         mExampleList.add(position,new ExampleItem(R.drawable.ic_android,"New Item"+position,"Line"+position));
 
