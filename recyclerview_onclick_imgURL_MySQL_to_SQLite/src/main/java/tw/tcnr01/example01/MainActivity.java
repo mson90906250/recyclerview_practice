@@ -194,51 +194,51 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mAdapter.notifyItemChanged(position);
     }
 //將的得到的MySQL資料匯入SQL
-    private void Mysqlsel(String sqlctl) {
+        private void Mysqlsel(String sqlctl) {
 
-         db = dbHelper.getWritableDatabase();
+            db = dbHelper.getWritableDatabase();
 
 
-        try {
-            String result = DBConnector.executeQuery(sqlctl);
-            mExampleList = new ArrayList<>();
-            /**************************************************************************
-             * SQL 結果有多筆資料時使用JSONArray
-             * 只有一筆資料時直接建立JSONObject物件 JSONObject
-             * jsonData = new JSONObject(result);
-             **************************************************************************/
-            //幾筆資料
-            JSONArray jsonArray = new JSONArray(result);
-            // ---
+            try {
+                String result = DBConnector.executeQuery(sqlctl);
+                mExampleList = new ArrayList<>();
+                /**************************************************************************
+                 * SQL 結果有多筆資料時使用JSONArray
+                 * 只有一筆資料時直接建立JSONObject物件 JSONObject
+                 * jsonData = new JSONObject(result);
+                 **************************************************************************/
+                //幾筆資料
+                JSONArray jsonArray = new JSONArray(result);
+                // ---
 
-            if (jsonArray.length() > 0) { // MySQL 連結成功有資料
+                if (jsonArray.length() > 0) { // MySQL 連結成功有資料
 
-                db.delete("test",null,null);// 匯入前,刪除所有SQLite資料
+                    db.delete("test",null,null);// 匯入前,刪除所有SQLite資料
 
-                //幾個欄位
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonData = jsonArray.getJSONObject(i);
-                    // // 取出 jsonObject 中的字段的值的空格
+                    //幾個欄位
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonData = jsonArray.getJSONObject(i);
+                        // // 取出 jsonObject 中的字段的值的空格
 
-                    ContentValues newRow = new ContentValues();
+                        ContentValues newRow = new ContentValues();
 
-                    Iterator itt = jsonData.keys();
+                        Iterator itt = jsonData.keys();
 
-                    while (itt.hasNext()) {
-                        String key = itt.next().toString();
-                        Log.d(TAG, "key=" + key);
-                        String value = jsonData.getString(key);
-                        if (value == null) {
-                            continue;
-                        } else if ("".equals(value.trim())) {
-                            continue;
-                        } else {
-                            jsonData.put(key, value.trim());
-                        }
-                        //Log.d(TAG,"value= "+value);
-                        newRow.put(key, value); // 動態找出有幾個欄位
+                        while (itt.hasNext()) {
+                            String key = itt.next().toString();
+                            Log.d(TAG, "key=" + key);
+                            String value = jsonData.getString(key);
+                            if (value == null) {
+                                continue;
+                            } else if ("".equals(value.trim())) {
+                                continue;
+                            } else {
+                                jsonData.put(key, value.trim());
+                            }
+                            //Log.d(TAG,"value= "+value);
+                            newRow.put(key, value); // 動態找出有幾個欄位
 
-                        db.insert("test","NULL",newRow);
+                            db.insert("test","NULL",newRow);
 
                         /*switch (key) {
                             case "ID":
@@ -253,18 +253,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 mImgURL = value;
                                 break;
                         }*/
+                        }
+
+                        //mExampleList.add(new ExampleItem(mImgURL, mId, mName));
+
+
                     }
-
-                    //mExampleList.add(new ExampleItem(mImgURL, mId, mName));
-
-
                 }
+            } catch (Exception e) {
+                Log.d(TAG, e.toString());
             }
-        } catch (Exception e) {
-            Log.d(TAG, e.toString());
-        }
 
-        //db.close();
+            //db.close();
 
     }
 
