@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Button buttonInsert,buttonRemove;
     private EditText editTextInsert,editTextRemove;
-    private String sqlctl;//sql語法
+    private String sqlctl;//mysql語法
     private String TAG = "tcnr01=>";
     private String mId,mName,mImgURL;
     private String mSQL = "CREATE TABLE " + "test" + " ( "
