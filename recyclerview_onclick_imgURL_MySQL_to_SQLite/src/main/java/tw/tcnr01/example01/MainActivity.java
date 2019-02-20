@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private DBHelper dbHelper;
     private SQLiteDatabase db;
+    private String mTablename;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void buildExampleList() {
         db = dbHelper.getReadableDatabase();
+
         Cursor cursor = db.query("test",null,null,null,null,null,null);
         cursor.moveToFirst();
         do {
@@ -195,12 +198,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 //將的得到的MySQL資料匯入SQL
         private void Mysqlsel(String sqlctl) {
-
+            mTablename = "test";
             db = dbHelper.getWritableDatabase();
 
 
             try {
                 String result = DBConnector.executeQuery(sqlctl);
+                Log.d(TAG,"aaaaaa=  "+result);
                 mExampleList = new ArrayList<>();
                 /**************************************************************************
                  * SQL 結果有多筆資料時使用JSONArray
@@ -209,6 +213,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                  **************************************************************************/
                 //幾筆資料
                 JSONArray jsonArray = new JSONArray(result);
+                Log.d(TAG,"bbbbbbb=  "+jsonArray);
                 // ---
 
                 if (jsonArray.length() > 0) { // MySQL 連結成功有資料
@@ -218,6 +223,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //幾個欄位
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonData = jsonArray.getJSONObject(i);
+                        Log.d(TAG,"ccccccc=  "+jsonData);
                         // // 取出 jsonObject 中的字段的值的空格
 
                         ContentValues newRow = new ContentValues();
@@ -226,19 +232,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         while (itt.hasNext()) {
                             String key = itt.next().toString();
-                            Log.d(TAG, "key=" + key);
+                            //Log.d(TAG, "key=" + key);
                             String value = jsonData.getString(key);
+                            //Log.d(TAG,"eeeeee =  "+value);
                             if (value == null) {
                                 continue;
                             } else if ("".equals(value.trim())) {
                                 continue;
-                            } else {
+                            }else if(value.equals("|")){
+                                Log.d(TAG,"dddddd ");
+                                mSQL = "CREATE TABLE " + "shop" + " ( "
+                                        + "Shop_ID INTEGER PRIMARY KEY," + "Kind TEXT NOT NULL," + "Name TEXT NOT NULL,"
+                                        +"Introduce TEXT NOT NULL,"+"Image TEXT NOT NULL,"+"URL TEXT NOT NULL"+ ");";
+                                db.execSQL(mSQL);
+                                mTablename = "shop";
+                                continue;
+                            }else {
                                 jsonData.put(key, value.trim());
                             }
                             //Log.d(TAG,"value= "+value);
                             newRow.put(key, value); // 動態找出有幾個欄位
 
-                            db.insert("test","NULL",newRow);
+                            db.insert(mTablename,"NULL",newRow);
 
                         /*switch (key) {
                             case "ID":
